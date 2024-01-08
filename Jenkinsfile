@@ -1,5 +1,5 @@
 pipeline{
-	agent{'dev-server'}
+	agent{ label 'dev-server'}
 	tools {
 	jdk 'Java17'
 	maven 'Maven3'

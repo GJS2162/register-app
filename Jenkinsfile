@@ -50,18 +50,28 @@ pipeline{
 		}
 	}
      }
-	 stage("Build and Push Docker Image"){
-		steps{
-			script{
-				 docker.withRegistry('',DOCKER_PASS){
-				docker_image = docker.build "${IMAGE_NAME}"
-				 }
-				docker.withRegistry('',DOCKER_PASS){
-				docker_image.push("${IMAGE_TAG}")
-				}
-	}
-     }	
-  }
+	//  stage("Build and Push Docker Image"){
+	// 	steps{
+	// 		script{
+	// 			 docker.withRegistry('',DOCKER_PASS){
+	// 			docker_image = docker.build "${IMAGE_NAME}"
+	// 			 }
+	// 			docker.withRegistry('',DOCKER_PASS){
+	// 			docker_image.push("${IMAGE_TAG}")
+	// 			}
+	// }
+ //     }	
+ //  }
+		stage("Push to DockerHub") {
+            steps {
+                echo "Here we will write code to push the image to Dockerhub by using withCredentials"
+                withCredentials([usernamePassword(credentialsId:"dockerHub",passwordVariable:"dockerHubPass",usernameVariable:"dockerHubUser")]){
+                sh "docker image tag complete-production-e2e-pipeline ${env.dockerHubUser}/complete-production-e2e-pipeline:latest "
+                sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}"
+                sh "docker push ${env.dockerHubUser}/complete-production-e2e-pipeline:latest"
+            }
+            }
+		}
 }
 }
 

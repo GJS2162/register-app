@@ -64,6 +64,25 @@ pipeline{
 	}
      }	
   }
+
+ stage("Trivy Scan") {
+           steps {
+               script {
+	            sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image gaurav2162/complete-production-e2e-pipeline:latest --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table')
+               }
+           }
+       }
+		
+    stage("Cleanup Artifacts"){
+	steps{
+		script{
+			sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
+			sh "docker rmi ${IMAGE_NAME}:latest"
+			
+	}
+     }	
+  }
+
 }
 }
 
@@ -91,13 +110,13 @@ pipeline{
 
 
 
-//        stage("Trivy Scan") {
-//            steps {
-//                script {
-// 	            sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ashfaque9x/register-app-pipeline:latest --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table')
-//                }
-//            }
-//        }
+       // stage("Trivy Scan") {
+       //     steps {
+       //         script {
+	      //       sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ashfaque9x/register-app-pipeline:latest --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table')
+       //         }
+       //     }
+       // }
 
 //        stage ('Cleanup Artifacts') {
 //            steps {
